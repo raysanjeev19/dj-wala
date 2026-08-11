@@ -128,7 +128,13 @@
 
     <!-- The sound source. A 1×1 iframe parked off-screen; everything you
          can see below is our own chrome. -->
-    <div class="yt-host" aria-hidden="true"><div id="yt-player"></div></div>
+    <div class="yt-host" aria-hidden="true">
+      <div id="yt-player"></div>
+      <!-- The horn's drop. A second player rather than a second source in
+           the first: the song has to keep running underneath, and one
+           player only holds one video at a time. -->
+      <div id="yt-drop"></div>
+    </div>
 
     <!-- ── Top bar ───────────────────────────────────────────────
          One grid row so the clock, the counter and the links share a

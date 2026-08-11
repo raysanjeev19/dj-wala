@@ -135,11 +135,14 @@ player: silence.
 - **The air horn is synthesised**, not an MP3 — three detuned saw oscillators
   through a saturator, in `app.js § Air horn`. No asset, no licence. Three taps
   inside two seconds rewinds the track.
-- **To use your own drop instead**, put an audio file at `assets/drop.mp3`.
-  Nothing else to change: the horn plays it if it loads and falls back to the
-  synth if it 404s or will not decode, so the site works with or without it. It
-  layers over the music because it is a plain `<audio>` element and the song is
-  inside a YouTube iframe — the two never touch each other's volume.
+- **The horn has three sources, in order.** `DROP_CLIP` in `app.js` plays a
+  marked span of a YouTube video (currently 18–24s of a viral remix) through a
+  *second* hidden player — one player holds one video, and the song has to keep
+  running underneath. Failing that, `assets/drop.mp3` if you put a file there.
+  Failing that, the synth. Each falls through when it cannot play, so the
+  button is never silent. YouTube has no "play until", so the stop is a timer;
+  it errs long, because cutting a drop mid-word sounds broken and a beat of
+  extra air does not.
   If you are thinking of a radio station's ident here: those are usually both
   copyrighted and trademarked. Fine locally; your call on a public site.
 - **The beat is two layers, not one.** A hard white strobe hit on the downbeat

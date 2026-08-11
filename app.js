@@ -562,6 +562,47 @@ function clipCurve(amount = 12) {
    and taglines are usually both copyrighted and trademarked. Fine on
    your own machine; your call on a public site. */
 
+/* The drop, in priority order:
+     1. a clip of a YouTube video, if DROP_CLIP has a videoId
+     2. assets/drop.mp3, if that file is there
+     3. the synthesised siren
+   Each falls through to the next when it cannot play, so the button is
+   never silent. */
+
+const DROP_CLIP = {
+  videoId: 't9fkqMR8gOE', // "Vaastegana Huiya" — Instagram viral DJ remix
+  from: 18,
+  to: 24,
+};
+
+let dropPlayer = null;
+let dropClipReady = false;
+let dropClipTimer = null;
+
+/** Play just the marked seconds, over whatever is already playing.
+ *  Returns false if the clip is not usable, so the caller can fall back. */
+function playDropClip() {
+  if (!dropClipReady) return false;
+
+  clearTimeout(dropClipTimer);
+  try {
+    dropPlayer.seekTo(DROP_CLIP.from, true);
+    dropPlayer.playVideo();
+  } catch {
+    dropClipReady = false;
+    return false;
+  }
+
+  // YouTube has no "play until", so the stop is on a timer. Slightly long
+  // is better than slightly short — cutting a drop mid-word sounds broken,
+  // while a beat of extra air does not.
+  dropClipTimer = setTimeout(
+    () => dropPlayer.pauseVideo(),
+    (DROP_CLIP.to - DROP_CLIP.from) * 1000 + 120
+  );
+  return true;
+}
+
 const DROP_SRC = '/assets/drop.mp3';
 let drop = null;
 let dropUsable = false;
@@ -610,6 +651,7 @@ function blastHorn() {
     if (!state.playing) yt?.playVideo?.();
   }
 
+  if (playDropClip()) return;
   if (dropUsable) playDrop();
   else synthHorn();
 }
@@ -818,6 +860,42 @@ window.onYouTubeIframeAPIReady = () => {
       },
     },
   });
+
+  // The drop's own player. Muted-by-default is not a concern here: it only
+  // ever speaks when the horn is pressed, which is a user gesture, so no
+  // autoplay policy stands in the way.
+  if (DROP_CLIP.videoId) {
+    dropPlayer = new YT.Player('yt-drop', {
+      height: '1',
+      width: '1',
+      videoId: DROP_CLIP.videoId,
+      playerVars: {
+        playsinline: 1,
+        controls: 0,
+        disablekb: 1,
+        // Cue it at the mark so the very first press does not have to wait
+        // for a seek across the whole file.
+        start: DROP_CLIP.from,
+        origin: location.origin,
+      },
+      events: {
+        onReady: () => {
+          dropClipReady = true;
+          try {
+            dropPlayer.setPlaybackQuality('tiny');
+          } catch {
+            /* the hint is advisory */
+          }
+        },
+        onError: () => {
+          // Embedding switched off, or the video is gone. The horn falls
+          // through to the mp3 and then to the synth.
+          dropClipReady = false;
+          console.warn('[dj-wala] drop clip unusable:', DROP_CLIP.videoId);
+        },
+      },
+    });
+  }
 };
 
 /* ── Start ───────────────────────────────────────────────────── */
