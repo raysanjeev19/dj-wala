@@ -32,8 +32,14 @@ app.js          player, playlist, horn, presence — no framework
 tracks.json     the set; generated, committed
 sw.js           caches the shell, never the audio
 scripts/
-  build-tracks.mjs    regenerates tracks.json
+  seeds.mjs           the song list, by hand
+  find-candidates.mjs 1. search   → candidates.json
+  check-embeds.mjs    2. verify   → embed-verdicts.json
+  build-tracks.mjs    3. assemble → tracks.json
+  embed-test.html     the page check-embeds drives
+  shot.mjs            screenshot at a true phone width
 docs/PRD.md     what this is and why
+docs/playlist-links.txt  one-click links to build the set on YouTube
 ```
 
 ## Rebuilding the playlist
@@ -81,14 +87,23 @@ So:
    players and records the verdict. Headless is enough: those error codes come
    from a permission check, not from decoding audio.
 
-3. **`build-tracks.mjs`** takes the first surviving candidate per song and adds
-   artist, album, duration and a square cover from the iTunes Search API.
+3. **`build-tracks.mjs`** takes the first surviving candidate per song that is
+   also **between 90 seconds and 12 minutes**, and adds artist, album, duration
+   and a square cover from the iTunes Search API. The length bound matters:
+   playable is not the same as being the song. Labels post 20-second teasers on
+   the same channels as the real upload, and search returns hour-long "non-stop
+   mix" jukeboxes that match by name. Two teasers and one 40-minute mix shipped
+   before this check existed — all of them cued cleanly and reported no error.
 
 Splitting them matters because the two slow parts are slow for different
 reasons. Search is rate-limited by YouTube and cached on disk
 (`scripts/.search-cache.json`); verification needs a browser and about three
 minutes. Editing the song list does not re-verify eight hundred videos, and
 re-verifying does not re-search.
+
+Run `node scripts/check-embeds.mjs --shipped` to point the same harness at
+`tracks.json` instead of the candidate pool — that checks what listeners
+actually get, and names any song that has stopped working.
 
 **Re-run step 2 every few months.** Videos get pulled, region-locked, or have
 embedding switched off after the fact, and all three sound identical from the
@@ -105,16 +120,18 @@ player: silence.
 
 ## Things worth knowing before you change something
 
-- **The playlist is 67 YouTube video IDs, and that is the whole library.** We
+- **The playlist is 61 YouTube video IDs, and that is the whole library.** We
   host no audio and never will.
 - **The listener count is not real.** It is a random walk whose band is set by
   the hour — mood lighting, not telemetry. `app.js § Presence` says so in the
   code. Swapping in a real heartbeat touches that one function and nothing else.
-- **The backdrop is a CSS placeholder.** The whole club scene — floor glow,
-  laser fans, haze — is drawn in `styles.css § Backdrop` so the site was
-  finishable before the illustration existed. Replace `.bg__floor` and
-  `.bg__lasers` with a `<picture>`; keep the haze, strobe, vignette and grain
-  layers above them, which are what make an image sit *in* the page.
+- **The backdrop is three photographs**, cross-faded on every track change
+  (`app.js § Scenes`). All three are in the DOM from the start; only opacity
+  moves, so a swap can never show a half-downloaded frame. Each carries its own
+  `--focus`, because a portrait phone crops a 3:2 frame hard and the DJ is
+  centre-right in two of them and hard left in the third — one shared value
+  beheads him in one. The layers stacked over them (bass, strobe, vignette,
+  scrim, grain) are what let a photograph carry an interface; keep them.
 - **The air horn is synthesised**, not an MP3 — three detuned saw oscillators
   through a saturator, in `app.js § Air horn`. No asset, no licence. Three taps
   inside two seconds rewinds the track.
@@ -125,8 +142,12 @@ player: silence.
   inside a YouTube iframe — the two never touch each other's volume.
   If you are thinking of a radio station's ident here: those are usually both
   copyrighted and trademarked. Fine locally; your call on a public site.
-- **The strobe is capped at 0.06 opacity** and is switched off entirely under
-  `prefers-reduced-motion`. It has to be survivable for an hour.
+- **The beat is two layers, not one.** A hard white strobe hit on the downbeat
+  (`steps(1, end)`, because a fade reads as a lamp dimming and a cut reads as a
+  strobe) and a magenta bass swell at half speed, since the kick lands on every
+  other beat and a swell on every one is just flicker. Both run off the track's
+  bpm and both are switched off entirely under `prefers-reduced-motion` — a
+  strobing club is exactly what that setting exists for.
 - **The disc spin is deliberately not bpm-linked.** A record does not turn
   faster because the song is quicker. The bpm drives the strobe and the presence
   dot only.
@@ -163,8 +184,11 @@ Static output, no build command. On Vercel: import the repo, framework preset
 Before going live:
 
 1. Point the `og:url`, `canonical` and JSON-LD URLs in `index.html` at the real
-   domain, and bump `?v=` on the OG image.
-2. Add `assets/opengraph.jpg` at 1200×630.
+   domain, and bump `?v=` on the OG image. Getting this wrong is expensive:
+   they pointed at djwala.xyz, which someone else owns and which answers 200,
+   so the page was telling Google its real version lived on their site.
+2. Regenerate `assets/opengraph.jpg` if the look changed:
+   `node scripts/shot.mjs 1200 630 assets/og.png --playing`, then convert.
 3. Put the real playlist URLs in `PLAYLISTS` at the top of `app.js`. Each
    button appears only when its URL is filled in, and is removed otherwise —
    a button captioned "Open the playlist on Spotify" that lands on
