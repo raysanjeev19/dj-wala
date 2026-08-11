@@ -1049,8 +1049,10 @@ body.list-open .install {
   line-height: 1.4;
   text-align: center;
   text-wrap: balance;
-  color: rgba(255, 247, 238, 0.46);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  /* This sat at 0.28 alpha and was, correctly, unreadable. Legal text
+     still has to be legible text. */
+  color: rgba(255, 247, 238, 0.82);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 
 .rights a {
@@ -1063,7 +1065,38 @@ body.list-open .install {
   color: var(--sand-dim);
 }
 
-/* ── Narrow screens ─────────────────────────────────────────── */
+/* ── Phones ─────────────────────────────────────────────────
+   Below this the single row stops working. At 360px the transport leaves
+   about sixty pixels for the song, which turns "Bole Chudiyan" into
+   "Bole C…" — a title that short is not a title. So the phone gets two
+   rows: the song across the full width, the transport under it. The
+   capsule and everything else stay as they are. */
+
+@media (max-width: 26rem) {
+  .player {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'disc meta'
+      'controls controls';
+    gap: 0.5rem 0.65rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 26px;
+  }
+
+  .disc {
+    grid-area: disc;
+  }
+
+  .meta {
+    grid-area: meta;
+  }
+
+  .controls {
+    grid-area: controls;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+}
 
 @media (max-width: 30rem) {
   .horn__text {
@@ -1074,12 +1107,10 @@ body.list-open .install {
     padding: 0.55rem;
   }
 
-  .horns {
-    bottom: calc(38vh + env(safe-area-inset-bottom));
-  }
-
+  /* Clear of the two-row bar, which is taller than the one-row version. */
+  .horns,
   .install {
-    bottom: calc(38vh + env(safe-area-inset-bottom));
+    bottom: calc(44vh + env(safe-area-inset-bottom));
   }
 
   .presence__label {
@@ -1087,9 +1118,33 @@ body.list-open .install {
   }
 
   .rights {
-    /* Two lines of 10px legal text under a 44px control row is more
-       clutter than a phone can spare. */
-    display: none;
+    /* Kept rather than hidden: this is the takedown route, and a rights
+       notice nobody can read is not a rights notice. */
+    font-size: 0.5625rem;
+    line-height: 1.35;
+  }
+
+  /* A portrait phone crops a 3:2 frame hard. Pulling the focus off the DJ
+     leaves the middle of the picture — where the wordmark sits — as room
+     and lights rather than the back of his head. */
+  .bg__scene[data-scene='0'] {
+    --focus: 40%;
+  }
+
+  .bg__scene[data-scene='1'] {
+    --focus: 46%;
+  }
+
+  .bg__scene[data-scene='2'] {
+    --focus: 26%;
+  }
+}
+
+/* Tall portrait has headroom to spare, so the wordmark rises over the
+   light rig instead of sitting on the crowd. */
+@media (max-width: 30rem) and (max-aspect-ratio: 3/5) {
+  .logo-slot {
+    --logo-lift: 30vh;
   }
 }
 

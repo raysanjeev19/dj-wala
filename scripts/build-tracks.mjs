@@ -120,6 +120,51 @@ for (const [i, seed] of seeds.entries()) {
 
 await writeFile(OUT, JSON.stringify(tracks, null, 2) + '\n');
 
+/* ── Keep the crawlable copy in step ──────────────────────────
+   The page a crawler is served has a wordmark and almost no words —
+   everything a visitor reads is drawn from tracks.json by JavaScript.
+   index.html carries an sr-only track list so there is something real to
+   index; it is written here so it can never drift from what actually
+   plays. Both the list and the JSON-LD count come from this same run. */
+
+const escape = (s) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const listHtml =
+  '      <ol>\n' +
+  tracks
+    .map((t) => `        <li>${escape(t.title)}${t.artist ? ` — ${escape(t.artist)}` : ''}</li>`)
+    .join('\n') +
+  '\n      </ol>';
+
+const INDEX = join(ROOT, 'index.html');
+let html = await readFile(INDEX, 'utf8');
+
+const START = '<!-- seo:tracks:start -->';
+const END = '<!-- seo:tracks:end -->';
+
+if (html.includes(START) && html.includes(END)) {
+  html =
+    html.slice(0, html.indexOf(START) + START.length) +
+    '\n' +
+    listHtml +
+    '\n      ' +
+    html.slice(html.indexOf(END));
+
+  // numTracks in the MusicPlaylist block, so the structured data agrees
+  // with the page.
+  html = html.replace(
+    /("@type": "MusicPlaylist",)/,
+    `$1\n            "numTracks": ${tracks.length},`
+  );
+  html = html.replace(/"numTracks": \d+,\n\s*"numTracks": \d+,/, `"numTracks": ${tracks.length},`);
+
+  await writeFile(INDEX, html);
+  console.log(`index.html: crawlable list updated (${tracks.length} tracks)`);
+} else {
+  console.warn('index.html: seo:tracks markers missing — crawlable list not updated');
+}
+
 const byRotation = {};
 for (const t of tracks) byRotation[t.rotation] = (byRotation[t.rotation] ?? 0) + 1;
 
