@@ -118,6 +118,13 @@ player: silence.
 - **The air horn is synthesised**, not an MP3 — three detuned saw oscillators
   through a saturator, in `app.js § Air horn`. No asset, no licence. Three taps
   inside two seconds rewinds the track.
+- **To use your own drop instead**, put an audio file at `assets/drop.mp3`.
+  Nothing else to change: the horn plays it if it loads and falls back to the
+  synth if it 404s or will not decode, so the site works with or without it. It
+  layers over the music because it is a plain `<audio>` element and the song is
+  inside a YouTube iframe — the two never touch each other's volume.
+  If you are thinking of a radio station's ident here: those are usually both
+  copyrighted and trademarked. Fine locally; your call on a public site.
 - **The strobe is capped at 0.06 opacity** and is switched off entirely under
   `prefers-reduced-motion`. It has to be survivable for an hour.
 - **The disc spin is deliberately not bpm-linked.** A record does not turn

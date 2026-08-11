@@ -25,10 +25,10 @@
      night scene reads as a dialog box sitting on top of it. Brighter than
      it looks it should be on paper: the backdrop is a photograph of neon,
      and anything dimmer than this loses to a magenta wash behind it. */
-  --sand: #fff7ee;
+  --sand: #fffbf6;
   /* Secondary text is the first thing to disappear over a bright frame,
      so it is only a step down, not a whisper. */
-  --sand-dim: rgba(255, 247, 238, 0.76);
+  --sand-dim: rgba(255, 251, 246, 0.88);
 
   /* Accents. Chrome only; the scene supplies the rest. */
   --neon: #ff2e93;
@@ -257,8 +257,8 @@ body.is-playing .bg__bass {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(6, 4, 12, 0.78) 0%, rgba(6, 4, 12, 0.34) 9%, transparent 20%),
-    linear-gradient(0deg, rgba(6, 4, 12, 0.86) 0%, rgba(6, 4, 12, 0.5) 16%, transparent 38%);
+    linear-gradient(180deg, rgba(5, 3, 10, 0.86) 0%, rgba(5, 3, 10, 0.44) 10%, transparent 22%),
+    linear-gradient(0deg, rgba(5, 3, 10, 0.92) 0%, rgba(5, 3, 10, 0.62) 18%, transparent 42%);
 }
 
 /* Film grain. An inline SVG turbulence rather than a tiled PNG: no extra
@@ -599,7 +599,7 @@ body.is-playing .presence__dot {
      small text, and backdrop-filter alone does not make that readable —
      it is also the first thing to be dropped on older Android, which
      would leave the wordmark showing straight through the playlist. */
-  background: rgba(10, 7, 18, 0.95);
+  background: rgba(9, 6, 16, 0.975);
   border: 1px solid transparent;
   border-radius: 18px;
   backdrop-filter: blur(18px) saturate(140%);
@@ -623,21 +623,20 @@ body.is-playing .presence__dot {
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.35rem;
-  align-items: center;
+  gap: 0.5rem;
+  align-items: start;
   padding: 0.6rem;
-  background: rgba(10, 7, 18, 0.94);
+  background: rgba(9, 6, 16, 0.985);
 }
 
+/* Six pills do not fit one phone-width row. Scrolling them left the last
+   one sliced in half by the shuffle button, with nothing on screen to say
+   it could be scrolled to — so they wrap instead. For six fixed, short
+   labels, showing all of them beats any amount of scroll affordance. */
 .list__rotations {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.35rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.list__rotations::-webkit-scrollbar {
-  display: none;
 }
 
 .pill {
@@ -738,7 +737,7 @@ body.is-playing .presence__dot {
 .li__artist {
   font-family: var(--ui);
   font-size: 0.75rem;
-  color: var(--sand-dim);
+  color: rgba(255, 251, 246, 0.7);
 }
 
 /* ── Player ─────────────────────────────────────────────────── */
@@ -1051,7 +1050,7 @@ body.list-open .install {
   text-wrap: balance;
   /* This sat at 0.28 alpha and was, correctly, unreadable. Legal text
      still has to be legible text. */
-  color: rgba(255, 247, 238, 0.82);
+  color: rgba(255, 251, 246, 0.9);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 

@@ -491,13 +491,10 @@ el.seek.addEventListener('keydown', (e) => {
 });
 
 /* ── Air horn ────────────────────────────────────────────────
-   Synthesised rather than an MP3: no asset to ship, no licence to clear,
-   and it layers over the music because it never touches the iframe.
-
-   The shape of a real pull-up horn is a fast pitch swoop up into a held,
-   slightly wavering note, played through something that clips. Three
-   detuned saws give it the beating you hear on the real thing; one saw
-   sounds like a test tone. */
+   Two sources, one button. If assets/drop.mp3 is there it wins; if not,
+   the siren below is synthesised on the spot — no asset to ship and no
+   licence to clear. Either way it layers over the music, because neither
+   one ever touches the iframe the song is playing in. */
 
 let ac = null;
 
@@ -521,6 +518,49 @@ function clipCurve(amount = 12) {
   return curve;
 }
 
+/* ── The drop ────────────────────────────────────────────────
+   If assets/drop.mp3 exists, the horn plays that instead of the
+   synthesised siren — a station ident, a vocal drop, whatever you put
+   there. It layers over the music for free: it is a plain <audio>
+   element and the song is inside a YouTube iframe, so the two never
+   touch each other's volume.
+
+   Nothing breaks when the file is absent. The browser fires `error` on
+   a 404, we note it, and the synth carries on as before — so the site
+   ships without an audio asset and gains one the moment you drop it in.
+
+   A note if you are putting a broadcaster's ident here: station idents
+   and taglines are usually both copyrighted and trademarked. Fine on
+   your own machine; your call on a public site. */
+
+const DROP_SRC = '/assets/drop.mp3';
+let drop = null;
+let dropUsable = false;
+
+(function loadDrop() {
+  drop = new Audio(DROP_SRC);
+  drop.preload = 'auto';
+  drop.addEventListener('canplaythrough', () => {
+    dropUsable = true;
+  });
+  drop.addEventListener('error', () => {
+    dropUsable = false; // no file, or not decodable — the synth covers it
+  });
+})();
+
+function playDrop() {
+  // A fresh element per press, so a second press layers over the first
+  // instead of cutting it off — which is what a rewind sounds like.
+  const shot = drop.cloneNode();
+  shot.volume = 0.9;
+  shot.play().catch(() => {
+    // Autoplay policy, or the file went away after it loaded. Fall back
+    // rather than leave the button silent.
+    dropUsable = false;
+    synthHorn();
+  });
+}
+
 let lastHorn = 0;
 let hornTaps = [];
 
@@ -541,6 +581,14 @@ function blastHorn() {
     if (!state.playing) yt?.playVideo?.();
   }
 
+  if (dropUsable) playDrop();
+  else synthHorn();
+}
+
+/** The fallback siren: a fast pitch swoop up into a held, slightly
+ *  wavering note, through something that clips. Three detuned saws give
+ *  it the beating you hear on a real horn; one saw is a test tone. */
+function synthHorn() {
   const ctx = audioCtx();
   const t0 = ctx.currentTime;
   const DUR = 1.1;
