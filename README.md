@@ -9,7 +9,9 @@ Third in the family alongside [hornokplease.xyz](https://hornokplease.xyz)
 built on the same idea: one illustrated scene, neutral glass chrome floating on
 top, and a hidden YouTube iframe doing the actual audio.
 
-Full spec in [`docs/PRD.md`](docs/PRD.md).
+**Picking this up cold? Start with [`HANDOVER.md`](HANDOVER.md)** — current
+state, what is still open, and the mistakes that cost the most time. Full spec
+in [`docs/PRD.md`](docs/PRD.md).
 
 ---
 
