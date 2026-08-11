@@ -193,7 +193,11 @@ export const SEEDS = [
      These live in their own rotation because the length rule that keeps
      jukeboxes out of the song list would throw every one of them away —
      see MIX_MAX_SECONDS in build-tracks.mjs. */
-  { name: 'Bollywood Sunset Mix', artist: 'DJ NYK', id: 'vMpaSBYh5pA', q: 'DJ NYK Bollywood Sunset Mix Vernazza', rotation: 'mix', bpm: 104 },
+  // Pinned by hand and then rejected by the verifier: DJ NYK's uploads
+  // return error 150, so this set plays on youtube.com and nowhere else.
+  // Left here as a record, since the obvious fix — pin it harder — does
+  // not work and someone will try it again otherwise.
+  // { name: 'Bollywood Sunset Mix', artist: 'DJ NYK', id: 'vMpaSBYh5pA', q: 'DJ NYK Bollywood Sunset Mix Vernazza', rotation: 'mix', bpm: 104 },
   { name: 'Bollywood Party Mix', q: 'DJ NYK non stop bollywood party mix', rotation: 'mix', bpm: 108 },
   { name: 'Punjabi Mashup', q: 'DJ NYK punjabi mashup non stop', rotation: 'mix', bpm: 100 },
   { name: 'Bollywood Retro Mix', q: 'DJ NYK retro bollywood mix 90s', rotation: 'mix', bpm: 120 },

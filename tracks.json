@@ -608,5 +608,315 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/dc/46/a9/dc46a9c9-794e-2d7a-1afb-97eb4ae0fff6/197188915704.jpg/400x400bb.jpg",
     "rotation": "after",
     "bpm": 90
+  },
+  {
+    "id": "aGZw9xmUz80",
+    "title": "Tu Cheez Badi Hai Mast",
+    "artist": "Dev Negi, Neha Kakkar, Monali Thakur & Ikka",
+    "album": "Badrinath Ki Dulhania (Original Motion Picture Soundtrack)",
+    "duration": 207,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/7c/6e/e7/7c6ee7c8-c1f3-e40f-1ec7-7ff96d0776f8/8902894358804_cover.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 105
+  },
+  {
+    "id": "zjSQnpHu5uo",
+    "title": "The Humma Song",
+    "artist": "A.R. Rahman, Badshah, Tanishk Bagchi, Shashaa Tirupati & Jubin Nautiyal",
+    "album": "OK Jaanu (Original Motion Picture Soundtrack)",
+    "duration": 180,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b0/f7/81/b0f78164-e057-e185-da9d-ea90f7251345/886446309835.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 104
+  },
+  {
+    "id": "5yo9PGjFCgU",
+    "title": "Laila Main Laila",
+    "artist": "Pawni Pandey",
+    "album": "Laila Main Laila Remix by DJ Notorious - Single",
+    "duration": 192,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/39/51/7e/39517e42-e362-843a-37cc-4db16741a871/8718857706571.png/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 108
+  },
+  {
+    "id": "dr8GnOaM1ig",
+    "title": "Makhna",
+    "artist": "Tanishk Bagchi, Yasser Desai & Asees Kaur",
+    "album": "Drive (Original Motion Picture Soundtrack)",
+    "duration": 183,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/88/4e/93/884e93af-ef43-e215-0d90-a27e32ba6f86/8718857907909.png/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 100
+  },
+  {
+    "id": "DN1VKl6TM2Y",
+    "title": "Mungda",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/DN1VKl6TM2Y/hqdefault.jpg",
+    "rotation": "baraat",
+    "bpm": 118
+  },
+  {
+    "id": "G89G0pRjxRw",
+    "title": "Kabhi Aar Kabhi Paar",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/G89G0pRjxRw/hqdefault.jpg",
+    "rotation": "retro",
+    "bpm": 120
+  },
+  {
+    "id": "zGqVZ5F0PO4",
+    "title": "Kaate Nahi Kat Te",
+    "artist": "Kishore Kumar & Alisha Chinai",
+    "album": "Mr. India (Original Motion Picture Soundtrack)",
+    "duration": 396,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music71/v4/6d/6a/93/6d6a93b7-700a-e98d-8ef3-51099befcc18/8902894864398_cover.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 100
+  },
+  {
+    "id": "HF59Os_o2zc",
+    "title": "Dil Le Gayi Kudi",
+    "artist": "Karan Aujla & MXRCI",
+    "album": "Winning Speech - Single",
+    "duration": 227,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/48/7c/36/487c3668-f7a4-4b1a-e09e-c74dae124dd9/5063483578089_cover.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 128
+  },
+  {
+    "id": "3FDuX16YJ44",
+    "title": "Fevicol Se",
+    "artist": "Mamta Sharma, Wajid & Friedbrainmusic",
+    "album": "Dabangg 2 (Original Motion Picture Soundtrack)",
+    "duration": 258,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/d0/73/85/d0738530-32b0-eab9-9712-244412ca4695/8902894351652_cover.jpg/400x400bb.jpg",
+    "rotation": "baraat",
+    "bpm": 120
+  },
+  {
+    "id": "PzcSrkMKDdk",
+    "title": "Halkat Jawani",
+    "artist": "Sunidhi Chauhan & Salim-Sulaiman",
+    "album": "Heroine (Original Motion Picture Soundtrack)",
+    "duration": 238,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/d3/7c/ab/d37cabde-bd66-c0d0-9fed-72bc2cb64187/886443613430.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 122
+  },
+  {
+    "id": "bpOJmRlgg-4",
+    "title": "Gandi Baat",
+    "artist": "Pritam, Mika Singh & Kalpana Patowary",
+    "album": "R...Rajkumar (Original Motion Picture Soundtrack)",
+    "duration": 250,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/f8/27/05/f8270578-7a2f-e572-bd2c-37ea86d94acf/196871086134.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 118
+  },
+  {
+    "id": "MsKT_B_2NXQ",
+    "title": "Tattad Tattad",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/MsKT_B_2NXQ/hqdefault.jpg",
+    "rotation": "baraat",
+    "bpm": 128
+  },
+  {
+    "id": "EIdVTM1lefk",
+    "title": "Radha",
+    "artist": "Vishal & Shekhar, Shekhar Ravjiani, Shreya Ghoshal, Udit Narayan & Vishal Dadlani",
+    "album": "Student of the Year (Original Motion Picture Soundtrack)",
+    "duration": 341,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/fe/27/2f/fe272f90-3bf9-b6e3-ffba-7068e9958c9c/886443601017.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 124
+  },
+  {
+    "id": "VnY1wusse1E",
+    "title": "Dhating Naach",
+    "artist": "Pritam, Neha Kakkar & Nakash Aziz",
+    "album": "Phata Poster Nikhla Hero (Original Motion Picture Soundtrack)",
+    "duration": 191,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/02/98/a6/0298a63c-c22f-52d9-a62c-1e7c19980a3a/8901854030330.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 120
+  },
+  {
+    "id": "ryUESj2fIxA",
+    "title": "Nashe Si Chadh Gayi",
+    "artist": "Vishal & Shekhar, Arijit Singh & Caralisa Monteiro",
+    "album": "Befikre (Original Motion Picture Soundtrack)",
+    "duration": 245,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/61/24/d9/6124d942-9d43-7863-f402-c37d9fb8e491/849486075603_cover.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 108
+  },
+  {
+    "id": "1i_yM5T_UKU",
+    "title": "High Heels Te Nachche",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/1i_yM5T_UKU/hqdefault.jpg",
+    "rotation": "punjabi",
+    "bpm": 104
+  },
+  {
+    "id": "b5hSby1sJHI",
+    "title": "Manali Trance",
+    "artist": "Yo Yo Honey Singh & Neha Kakkar",
+    "album": "The Shaukeens (Original Motion Picture Soundtrack)",
+    "duration": 203,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/20/4e/6d/204e6dee-b958-ac17-eebf-45fbc6007289/840780181267.png/400x400bb.jpg",
+    "rotation": "after",
+    "bpm": 128
+  },
+  {
+    "id": "Z0GT-_P8Jrg",
+    "title": "Love Dose",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/Z0GT-_P8Jrg/hqdefault.jpg",
+    "rotation": "punjabi",
+    "bpm": 100
+  },
+  {
+    "id": "09uPF-Q4FkM",
+    "title": "Brown Rang",
+    "artist": "Yo Yo Honey Singh",
+    "album": "International Villager",
+    "duration": 179,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/69/1a/1e/691a1ec2-cae5-4923-4a43-72b1155c004f/8902633269552.jpg/400x400bb.jpg",
+    "rotation": "punjabi",
+    "bpm": 98
+  },
+  {
+    "id": "jPxbfNr13v0",
+    "title": "Pinga",
+    "artist": "Sanjay Leela Bhansali, Shreya Ghoshal, Vaishali Made & Siddharth-Garima",
+    "album": "Bajirao Mastani (Original Motion Picture Soundtrack)",
+    "duration": 255,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f1/4f/8f/f14f8fe3-4fda-8244-8dff-0db4be58bd4a/196871079808.jpg/400x400bb.jpg",
+    "rotation": "baraat",
+    "bpm": 132
+  },
+  {
+    "id": "1wUmTOZh8Rg",
+    "title": "Rangeela Re",
+    "artist": "Asha Bhosle & Aditya Narayan",
+    "album": "Rangeela (Original Motion Picture Soundtrack)",
+    "duration": 335,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ba/c2/7d/bac27dfe-7eb9-286e-0fb3-5c370d7311c0/8901854004461.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 118
+  },
+  {
+    "id": "67YIU2j_PX0",
+    "title": "Mehboob Mere",
+    "artist": "Sukhwinder Singh & Alka Yagnik",
+    "album": "Biwi No. 1 (Original Motion Picture Soundtrack)",
+    "duration": 304,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7e/34/58/7e345871-6471-2d73-d0ed-67e8c608828d/8901854009282.jpg/400x400bb.jpg",
+    "rotation": "retro",
+    "bpm": 122
+  },
+  {
+    "id": "r-aqQqjUepQ",
+    "title": "What Jhumka",
+    "artist": "Pritam, Arijit Singh, Jonita Gandhi, Ranveer Singh, Madan Mohan & Amitabh Bhattacharya",
+    "album": "What Jhumka ? (From \"Rocky Aur Rani Kii Prem Kahaani\") - Single",
+    "duration": 214,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/dc/94/b5/dc94b594-4683-d9fe-5b92-cd4d38ea7209/197189341342.jpg/400x400bb.jpg",
+    "rotation": "baraat",
+    "bpm": 124
+  },
+  {
+    "id": "dzKSxDEAMDY",
+    "title": "Jhoome Jo Pathaan",
+    "artist": "Vishal & Shekhar, Arijit Singh, Sukriti Kakar, Vishal Dadlani & Shekhar Ravjiani",
+    "album": "Pathaan (Original Motion Picture Soundtrack)",
+    "duration": 208,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/8d/6a/19/8d6a197e-2aaa-5504-cd43-533351597487/Pathaan-Album-Audio-Cover-Final.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 108
+  },
+  {
+    "id": "poMt_tQAjEg",
+    "title": "Besharam Rang",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/poMt_tQAjEg/hqdefault.jpg",
+    "rotation": "bolly",
+    "bpm": 104
+  },
+  {
+    "id": "Rd9wF5fAnVw",
+    "title": "Zingaat",
+    "artist": "Ajay-Atul",
+    "album": "Dhadak (Original Motion Picture Soundtrack) - EP",
+    "duration": 227,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/66/5a/e8/665ae8ad-1aab-5d0c-3ca9-4fa062b1606c/8718857670711.png/400x400bb.jpg",
+    "rotation": "baraat",
+    "bpm": 138
+  },
+  {
+    "id": "ljl2ib2mQJ0",
+    "title": "Aila Re Aillaa",
+    "artist": "Daler Mehndi",
+    "album": "Show Me the Thumka - Holi Dance Hits",
+    "duration": 156,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/0c/6b/60/0c6b6026-b7fa-5de7-75c7-16cd20215934/8903431930873_cover.jpg/400x400bb.jpg",
+    "rotation": "bolly",
+    "bpm": 118
+  },
+  {
+    "id": "kOZm7D5txWA",
+    "title": "Punjabi Mashup",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/kOZm7D5txWA/hqdefault.jpg",
+    "rotation": "mix",
+    "bpm": 100
+  },
+  {
+    "id": "_BS3SI-kRyU",
+    "title": "Bollywood Retro Mix",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/_BS3SI-kRyU/hqdefault.jpg",
+    "rotation": "mix",
+    "bpm": 120
+  },
+  {
+    "id": "pu1kYeGh5ao",
+    "title": "Old Is Gold Mix",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/pu1kYeGh5ao/hqdefault.jpg",
+    "rotation": "mix",
+    "bpm": 122
+  },
+  {
+    "id": "9hVA4svCRAk",
+    "title": "Bhangra Mix",
+    "artist": "",
+    "album": "",
+    "duration": null,
+    "cover": "https://i.ytimg.com/vi/9hVA4svCRAk/hqdefault.jpg",
+    "rotation": "mix",
+    "bpm": 100
   }
 ]
