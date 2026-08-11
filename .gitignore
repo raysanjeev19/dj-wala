@@ -9,3 +9,6 @@ scripts/.search-cache.json
 
 # Throwaway Chrome profile used by the embeddability check.
 scripts/.chrome-embed-check/
+
+# Throwaway Chrome profiles used by the screenshot tool.
+scripts/.chrome-shot-*/

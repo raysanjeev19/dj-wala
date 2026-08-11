@@ -82,7 +82,18 @@
           if (!current) return;
           clearTimeout(timer);
 
-          verdicts[current] = { error, ok: error === null && cued };
+          let duration = 0;
+          try {
+            duration = player.getDuration?.() ?? 0;
+          } catch {
+            /* player not ready enough to ask */
+          }
+
+          verdicts[current] = {
+            error,
+            duration,
+            ok: error === null && cued && duration > 0,
+          };
           current = null;
           finished++;
 
@@ -129,10 +140,16 @@
         for (let i = 0; i < LANES; i++) makeLane(i);
       };
 
-      fetch('/scripts/candidates.json')
+      // ?src=/tracks.json vets what actually shipped; the default vets the
+      // candidate pool before anything is chosen from it.
+      const SRC = new URLSearchParams(location.search).get('src') || '/scripts/candidates.json';
+
+      fetch(SRC)
         .then((r) => r.json())
-        .then((seeds) => {
-          queue = [...new Set(seeds.flatMap((s) => s.candidates))];
+        .then((rows) => {
+          queue = [
+            ...new Set(rows.flatMap((r) => (r.candidates ? r.candidates : [r.id]))),
+          ];
           total = queue.length;
           document.getElementById('status').textContent = `0/${total}`;
 

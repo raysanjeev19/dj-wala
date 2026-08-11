@@ -25,8 +25,8 @@
    not from decoding audio, so they fire in a browser with no media stack.
 
    Usage — with the site already being served on :4173:
-     node scripts/check-embeds.mjs
-     node scripts/check-embeds.mjs --prune    # drop the bad ones
+     node scripts/check-embeds.mjs             # vet the candidate pool
+     node scripts/check-embeds.mjs --shipped   # vet tracks.json as shipped
    ───────────────────────────────────────────────────────────── */
 
 import { spawn } from 'node:child_process';
@@ -76,12 +76,20 @@ async function main() {
   chrome.stderr.on('data', () => {}); // Chrome is chatty on stderr; ignore
 
   try {
-    const target = await openPage(`${SITE}/scripts/embed-test.html`);
+    // --shipped vets tracks.json — what listeners actually get — rather
+    // than the candidate pool it was chosen from.
+    const src = process.argv.includes('--shipped') ? '?src=/tracks.json' : '';
+    const target = await openPage(`${SITE}/scripts/embed-test.html${src}`);
     const result = await pollUntilDone(target);
     await report(result);
   } finally {
     chrome.kill();
-    await rm(PROFILE, { recursive: true, force: true });
+    // Chrome keeps writing for a moment after SIGTERM, so a delete issued
+    // straight away races it and throws ENOTEMPTY — which would otherwise
+    // bury a completed run's results under a cleanup error. Give it a beat,
+    // and never let tidying up fail the check.
+    await sleep(500);
+    await rm(PROFILE, { recursive: true, force: true }).catch(() => {});
   }
 }
 
@@ -158,7 +166,8 @@ async function pollUntilDone(wsUrl) {
 }
 
 async function report({ total, ok, verdicts }) {
-  console.log(`\n${ok}/${total} candidate videos are playable in an embed.\n`);
+  const label = process.argv.includes('--shipped') ? 'shipped' : 'candidate';
+  console.log(`\n${ok}/${total} ${label} videos are playable in an embed.\n`);
 
   const reasons = {};
   for (const v of Object.values(verdicts)) {
@@ -170,22 +179,42 @@ async function report({ total, ok, verdicts }) {
     console.log(`  ${String(n).padStart(4)} × ${why}`);
   }
 
-  await writeFile(
-    join(ROOT, 'scripts', 'embed-verdicts.json'),
-    JSON.stringify(verdicts, null, 2) + '\n'
-  );
+  // Two different questions, two different files. A --shipped run must not
+  // clobber the candidate verdicts, because build-tracks.mjs reads those to
+  // decide what to ship in the first place.
+  const shipped = process.argv.includes('--shipped');
+  const verdictFile = shipped ? 'shipped-verdicts.json' : 'embed-verdicts.json';
 
-  // Per song: did any of its candidates survive?
-  const seeds = JSON.parse(await readFile(join(ROOT, 'scripts', 'candidates.json'), 'utf8'));
-  const stranded = seeds.filter((s) => !s.candidates.some((id) => verdicts[id]?.ok));
+  await writeFile(join(ROOT, 'scripts', verdictFile), JSON.stringify(verdicts, null, 2) + '\n');
 
-  console.log(`\n${seeds.length - stranded.length}/${seeds.length} songs have a playable video.`);
-  if (stranded.length) {
-    console.log('\nNo playable upload found for:');
-    for (const s of stranded) console.log(`  [${s.rotation}] ${s.name}`);
+  if (shipped) {
+    // Name the failures, because on the shipped list every one is a song a
+    // listener would have hit.
+    const tracks = JSON.parse(await readFile(join(ROOT, 'tracks.json'), 'utf8'));
+    const broken = tracks.filter((t) => !verdicts[t.id]?.ok);
+
+    console.log(`\n${tracks.length - broken.length}/${tracks.length} shipped tracks play.`);
+    if (broken.length) {
+      console.log('\nBroken in the shipped playlist:');
+      for (const t of broken) {
+        const v = verdicts[t.id];
+        const why = v?.error === null ? 'never cued' : `${v?.error} ${ERROR_MEANING[v?.error] ?? ''}`;
+        console.log(`  [${t.rotation.padEnd(7)}] ${t.title.padEnd(28)} ${t.id}  — ${why}`);
+      }
+    }
+  } else {
+    // Per song: did any of its candidates survive?
+    const seeds = JSON.parse(await readFile(join(ROOT, 'scripts', 'candidates.json'), 'utf8'));
+    const stranded = seeds.filter((s) => !s.candidates.some((id) => verdicts[id]?.ok));
+
+    console.log(`\n${seeds.length - stranded.length}/${seeds.length} songs have a playable video.`);
+    if (stranded.length) {
+      console.log('\nNo playable upload found for:');
+      for (const s of stranded) console.log(`  [${s.rotation}] ${s.name}`);
+    }
   }
 
-  console.log('\nVerdicts: scripts/embed-verdicts.json');
+  console.log(`\nVerdicts: scripts/${verdictFile}`);
 }
 
 await main();

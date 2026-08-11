@@ -89,10 +89,36 @@ const stranded = [];
 for (const [i, seed] of seeds.entries()) {
   const tag = `[${String(i + 1).padStart(3, '0')}/${seeds.length}]`;
 
-  const id = seed.candidates.find((c) => verdicts[c]?.ok);
+  // Playable is not the same as being the song, and the length gives both
+  // impostors away.
+  //
+  // Too short: labels post 20-second teasers and 7-second promos on the
+  // same channels as the real upload. They cue cleanly and report no
+  // error — the shipped playlist had two of them.
+  //
+  // Too long: search also returns jukeboxes, full albums and hour-long
+  // "non-stop party mix" uploads, which match the song name because the
+  // song is somewhere inside them. One of those got in at forty minutes.
+  const MIN_SECONDS = 90;
+  const MAX_SECONDS = 12 * 60;
+
+  const isSong = (c) => {
+    const d = verdicts[c]?.duration ?? 0;
+    return verdicts[c]?.ok && d >= MIN_SECONDS && d <= MAX_SECONDS;
+  };
+
+  const id = seed.candidates.find(isSong);
+
   if (!id) {
+    // Say which wall it hit: nothing embeddable at all is a different
+    // problem from everything embeddable being the wrong length.
+    const playable = seed.candidates.filter((c) => verdicts[c]?.ok);
     stranded.push(seed);
-    console.warn(`${tag} ✗ ${seed.name} — no candidate is embeddable`);
+    console.warn(
+      playable.length
+        ? `${tag} ✗ ${seed.name} — ${playable.length} playable, none a song-length upload`
+        : `${tag} ✗ ${seed.name} — no candidate is embeddable`
+    );
     continue;
   }
 
