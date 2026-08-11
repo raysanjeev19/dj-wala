@@ -102,12 +102,23 @@ for (const [i, seed] of seeds.entries()) {
   const MIN_SECONDS = 90;
   const MAX_SECONDS = 12 * 60;
 
-  const isSong = (c) => {
+  // The `mix` rotation is whole DJ sets, so the upper bound that keeps
+  // jukeboxes out of the song list would throw away every one of them.
+  // The lower bound goes up instead: a five-minute "mix" is a single
+  // track someone mislabelled.
+  const MIX_MIN_SECONDS = 10 * 60;
+  const MIX_MAX_SECONDS = 3 * 60 * 60;
+
+  const isMix = seed.rotation === 'mix';
+  const lo = isMix ? MIX_MIN_SECONDS : MIN_SECONDS;
+  const hi = isMix ? MIX_MAX_SECONDS : MAX_SECONDS;
+
+  const fits = (c) => {
     const d = verdicts[c]?.duration ?? 0;
-    return verdicts[c]?.ok && d >= MIN_SECONDS && d <= MAX_SECONDS;
+    return verdicts[c]?.ok && d >= lo && d <= hi;
   };
 
-  const id = seed.candidates.find(isSong);
+  const id = seed.candidates.find(fits);
 
   if (!id) {
     // Say which wall it hit: nothing embeddable at all is a different
@@ -116,13 +127,17 @@ for (const [i, seed] of seeds.entries()) {
     stranded.push(seed);
     console.warn(
       playable.length
-        ? `${tag} ✗ ${seed.name} — ${playable.length} playable, none a song-length upload`
+        ? `${tag} ✗ ${seed.name} — ${playable.length} playable, none the right length`
         : `${tag} ✗ ${seed.name} — no candidate is embeddable`
     );
     continue;
   }
 
-  const it = await itunes(itunesTerm(seed));
+  // No iTunes lookup for a DJ set: there is no store entry for one, so the
+  // search returns whichever single happens to match a word in the query
+  // and dresses an hour-long mix in some unrelated song's cover, artist
+  // and three-minute duration. Better nothing than confidently wrong.
+  const it = isMix ? null : await itunes(itunesTerm(seed));
 
   tracks.push({
     id,

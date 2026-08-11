@@ -91,6 +91,7 @@ const ROTATIONS = [
   { key: 'baraat', deva: 'बारात' },
   { key: 'retro', deva: 'रेट्रो' },
   { key: 'after', deva: 'आफ्टर' },
+  { key: 'mix', deva: 'मिक्स' },
 ];
 
 /* ── Bumper lines ────────────────────────────────────────────

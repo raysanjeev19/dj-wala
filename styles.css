@@ -753,7 +753,11 @@ body.is-playing .presence__dot {
   align-items: center;
   width: min(34rem, 100%);
   padding: 0.5rem 0.7rem 0.5rem 0.5rem;
-  background: var(--glass);
+  /* A dark tint, not the 10%-white glass the rest of the chrome uses.
+     White glass over a photograph of a lit booth is barely a surface at
+     all: the console showed straight through the bar and the song title
+     had to fight it. This still reads as glass, it just has a floor. */
+  background: rgba(12, 8, 20, 0.62);
   border: 1px solid var(--glass-line);
   border-radius: 999px;
   backdrop-filter: blur(18px) saturate(140%);
@@ -1094,6 +1098,26 @@ body.list-open .install {
     grid-area: controls;
     justify-content: center;
     gap: 0.4rem;
+  }
+
+  /* The two-row layout frees up width, so the sleeve and the title can
+     both go up a size — this is the one screen where they are the whole
+     interface. */
+  .disc {
+    width: 58px;
+    height: 58px;
+  }
+
+  .meta__title {
+    font-size: 1rem;
+  }
+
+  .meta__artist {
+    font-size: 0.8125rem;
+  }
+
+  .time {
+    font-size: 0.6875rem;
   }
 }
 
