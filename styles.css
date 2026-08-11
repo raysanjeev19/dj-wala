@@ -1140,6 +1140,13 @@ body.list-open .install {
     display: none; /* the dot and the number carry it */
   }
 
+  /* The wordmark is the only thing on this screen doing brand work, and
+     9vw of a 390px phone is 35px — smaller than the fluid minimum, so it
+     was pinned at the floor and looked incidental. Its own scale here. */
+  .logo {
+    --logo-size: clamp(3.4rem, 15vw, 4.75rem);
+  }
+
   .rights {
     /* Kept rather than hidden: this is the takedown route, and a rights
        notice nobody can read is not a rights notice. */

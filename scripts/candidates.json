@@ -2282,5 +2282,113 @@
     "rotation": "punjabi",
     "bpm": 100,
     "candidates": []
+  },
+  {
+    "name": "Bollywood Sunset Mix",
+    "artist": "DJ NYK",
+    "id": "vMpaSBYh5pA",
+    "q": "DJ NYK Bollywood Sunset Mix Vernazza",
+    "rotation": "mix",
+    "bpm": 104,
+    "candidates": [
+      "vMpaSBYh5pA"
+    ]
+  },
+  {
+    "name": "Bollywood Party Mix",
+    "q": "DJ NYK non stop bollywood party mix",
+    "rotation": "mix",
+    "bpm": 108,
+    "candidates": [
+      "2wTLIQOn44E",
+      "Ymdql-1EyGY",
+      "sWMhhboqwMc",
+      "vMpaSBYh5pA",
+      "kr216op6E3k",
+      "XJ_eG340BIM",
+      "1eb6annb8dg",
+      "tRqDEv5xXY4"
+    ]
+  },
+  {
+    "name": "Punjabi Mashup",
+    "q": "DJ NYK punjabi mashup non stop",
+    "rotation": "mix",
+    "bpm": 100,
+    "candidates": [
+      "2wTLIQOn44E",
+      "kOZm7D5txWA"
+    ]
+  },
+  {
+    "name": "Bollywood Retro Mix",
+    "q": "DJ NYK retro bollywood mix 90s",
+    "rotation": "mix",
+    "bpm": 120,
+    "candidates": [
+      "wv3c7_W3XV0",
+      "do8HFIKfcjY",
+      "d43bMDjjWVE",
+      "vMpaSBYh5pA",
+      "rQ5ccu4hvvo",
+      "_BS3SI-kRyU",
+      "XuxLs3p58mw",
+      "hbbyQybAPlo"
+    ]
+  },
+  {
+    "name": "Desi Wedding Mix",
+    "q": "DJ Chetas non stop bollywood wedding mix",
+    "rotation": "mix",
+    "bpm": 118,
+    "candidates": [
+      "rm_-SeKUNsM",
+      "p9nYHMe7Fwo",
+      "8YLVaMaAfSM",
+      "hjCTcLf6z40",
+      "0NFkK27sy8Q"
+    ]
+  },
+  {
+    "name": "Bollywood Dance Mashup",
+    "q": "DJ Shadow Dubai bollywood mashup non stop",
+    "rotation": "mix",
+    "bpm": 110,
+    "candidates": [
+      "IUmn1G7UP4s",
+      "ea0UUbzfg2M"
+    ]
+  },
+  {
+    "name": "Old Is Gold Mix",
+    "q": "non stop old hindi songs dj remix 90s mix",
+    "rotation": "mix",
+    "bpm": 122,
+    "candidates": [
+      "pu1kYeGh5ao",
+      "T4NYGmCmAus",
+      "x11HU8uUG-c",
+      "wqKkzeBJv_w",
+      "31utocPblJU",
+      "pxFQC1YWivM",
+      "ndKUnQOdrDU",
+      "--MstfmDaeM"
+    ]
+  },
+  {
+    "name": "Bhangra Mix",
+    "q": "non stop bhangra mix dj punjabi party",
+    "rotation": "mix",
+    "bpm": 100,
+    "candidates": [
+      "SBduEbOeRe4",
+      "rFVk4m-fIGk",
+      "95HxxkNsrkE",
+      "S3SSvU6thgE",
+      "-jlitiK03OA",
+      "HK-euehTP0s",
+      "Ah-L9OndsMM",
+      "9hVA4svCRAk"
+    ]
   }
 ]
