@@ -52,6 +52,34 @@ const state = {
 
 let yt = null;
 
+/* ── Listen elsewhere ────────────────────────────────────────
+   Paste a playlist URL here and its button appears in the top bar. Leave
+   it empty and the button is removed.
+
+   Empty is the honest default. A button captioned "Open the playlist on
+   Spotify" that lands on spotify.com is worse than no button: it reads
+   as a broken link rather than a missing feature, and it costs the
+   visitor a tap to find that out. */
+
+const PLAYLISTS = {
+  ytm: '', // e.g. https://music.youtube.com/playlist?list=…
+  spotify: '', // e.g. https://open.spotify.com/playlist/…
+};
+
+function applyPlaylistLinks() {
+  for (const [key, url] of Object.entries(PLAYLISTS)) {
+    const a = $(`link-${key}`);
+    if (!a) continue;
+    if (url) a.href = url;
+    else a.remove();
+  }
+}
+
+// Run now rather than inside boot(): if tracks.json fails to load, the
+// player is dead anyway, but a dead outbound link on top of that is a
+// second broken thing on the same screen.
+applyPlaylistLinks();
+
 /* ── Rotations ───────────────────────────────────────────────
    Devanagari first, Latin under it — the same bilingual posture as the
    wordmark. `all` is not in tracks.json; it is the absence of a filter. */

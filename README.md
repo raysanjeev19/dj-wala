@@ -165,9 +165,11 @@ Before going live:
 1. Point the `og:url`, `canonical` and JSON-LD URLs in `index.html` at the real
    domain, and bump `?v=` on the OG image.
 2. Add `assets/opengraph.jpg` at 1200×630.
-3. Put the real YouTube Music and Spotify playlist URLs on `#link-ytm` and
-   `#link-spotify` in `index.html` — they currently point at each service's
-   home page.
+3. Put the real playlist URLs in `PLAYLISTS` at the top of `app.js`. Each
+   button appears only when its URL is filled in, and is removed otherwise —
+   a button captioned "Open the playlist on Spotify" that lands on
+   spotify.com reads as broken, not as unfinished. `docs/playlist-links.txt`
+   has one-click links that build the set on YouTube.
 4. Bump `CACHE` in `sw.js`. A stale shell serving a fresh `tracks.json` is the
    one bug that file can cause, and a new cache name is the fix.
 
