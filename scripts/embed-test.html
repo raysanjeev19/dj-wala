@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>embed-test</title>
+    <style>
+      body {
+        font: 13px ui-monospace, monospace;
+        background: #111;
+        color: #ddd;
+      }
+      #players {
+        position: fixed;
+        left: -9999px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ─────────────────────────────────────────────────────────────
+         Embeddability harness.
+
+         No HTTP endpoint will tell you whether a video may play inside an
+         iframe. oEmbed happily returns a title for a video whose owner has
+         switched embedding off — the single most common reason an Indian
+         music upload is silent on a third-party site, because the big
+         labels disable it by default.
+
+         The only authority is the player, so this runs the real IFrame API
+         over every candidate in candidates.json and writes down the verdict:
+
+           101 / 150  the owner does not allow embedding    ← the big one
+           100        removed or private
+           5          player fault
+           2          bad video id
+
+         Headless is fine: those codes come from a permission check, not
+         from decoding audio, so they fire in a browser with no media stack.
+
+         Several players run at once because the list is long and each
+         verdict is a network round trip — sequentially this takes twenty
+         minutes, in parallel about three.
+
+         Driven by scripts/check-embeds.mjs.
+         ───────────────────────────────────────────────────────────── */ -->
+    <div id="players"></div>
+    <p id="status">loading…</p>
+    <pre id="out">running</pre>
+
+    <script>
+      const LANES = 8;
+      const PER_VIDEO_MS = 1800;
+
+      let queue = [];
+      let total = 0;
+      const verdicts = {};
+      let finished = 0;
+
+      function done() {
+        const ok = Object.values(verdicts).filter((v) => v.ok).length;
+        document.getElementById('out').textContent = JSON.stringify({
+          done: true,
+          total,
+          ok,
+          verdicts,
+        });
+        document.title = `DONE ok=${ok}/${total}`;
+      }
+
+      /** One player, working the shared queue until it runs dry. */
+      function makeLane(laneIndex) {
+        const host = document.createElement('div');
+        host.id = `p${laneIndex}`;
+        document.getElementById('players').append(host);
+
+        let current = null;
+        let error = null;
+        let cued = false;
+        let timer = null;
+        let player = null;
+
+        function settle() {
+          if (!current) return;
+          clearTimeout(timer);
+
+          verdicts[current] = { error, ok: error === null && cued };
+          current = null;
+          finished++;
+
+          document.getElementById('status').textContent = `${finished}/${total}`;
+          document.title = `testing ${finished}/${total}`;
+
+          if (finished === total) return done();
+          nextInLane();
+        }
+
+        function nextInLane() {
+          const id = queue.shift();
+          if (!id) return; // queue dry; other lanes finish the rest
+
+          current = id;
+          error = null;
+          cued = false;
+
+          // cue, not load: the question is "may this play here", not "play it".
+          player.cueVideoById(id);
+          timer = setTimeout(settle, PER_VIDEO_MS);
+        }
+
+        player = new YT.Player(host.id, {
+          height: '120',
+          width: '160',
+          playerVars: { playsinline: 1, controls: 0, origin: location.origin },
+          events: {
+            onReady: nextInLane,
+            onStateChange: (e) => {
+              if (e.data === 5) cued = true; // 5 = CUED
+            },
+            onError: (e) => {
+              error = e.data;
+              // A verdict already — no reason to wait out the timeout.
+              clearTimeout(timer);
+              setTimeout(settle, 80);
+            },
+          },
+        });
+      }
+
+      window.onYouTubeIframeAPIReady = () => {
+        for (let i = 0; i < LANES; i++) makeLane(i);
+      };
+
+      fetch('/scripts/candidates.json')
+        .then((r) => r.json())
+        .then((seeds) => {
+          queue = [...new Set(seeds.flatMap((s) => s.candidates))];
+          total = queue.length;
+          document.getElementById('status').textContent = `0/${total}`;
+
+          const s = document.createElement('script');
+          s.src = 'https://www.youtube.com/iframe_api';
+          document.head.append(s);
+        });
+    </script>
+  </body>
+</html>

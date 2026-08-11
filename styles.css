@@ -1,0 +1,1137 @@
+/* ─────────────────────────────────────────────────────────────
+   DJ Wala
+   The artwork carries all the colour. Everything the app draws on
+   top is neutral glass, so it sits on any background image — the
+   same rule Truck Wala and Deluxe Saloon are built on.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Nudge the wordmark to line up with your artwork.
+     --logo-x: 0 is centred; negative moves left.
+     --logo-lift raises it above dead centre. */
+  --logo-x: 0px;
+  /* How far above dead centre the wordmark sits. 0 is the exact middle of
+     the viewport; the default lifts it clear of the dock. */
+  --logo-lift: 25vh;
+  --logo-size: clamp(2.6rem, 9vw, 7.5rem);
+
+  --edge: clamp(1rem, 2.2vw, 1.75rem);
+
+  /* Ground */
+  --ink: #08060f;
+  --shade: #140e1f;
+
+  /* Type. Warm rather than pure white — a club is warm, and #fff on a
+     night scene reads as a dialog box sitting on top of it. Brighter than
+     it looks it should be on paper: the backdrop is a photograph of neon,
+     and anything dimmer than this loses to a magenta wash behind it. */
+  --sand: #fff7ee;
+  /* Secondary text is the first thing to disappear over a bright frame,
+     so it is only a step down, not a whisper. */
+  --sand-dim: rgba(255, 247, 238, 0.76);
+
+  /* Accents. Chrome only; the scene supplies the rest. */
+  --neon: #ff2e93;
+  --strobe-c: #22e1ff;
+  --brass: #ffb627;
+
+  /* Glass */
+  --glass: rgba(255, 255, 255, 0.1);
+  --glass-line: rgba(255, 255, 255, 0.2);
+  --shadow-glass: 0 8px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  /* Two radii: a tight one for edge definition against a bright patch,
+     and a wide soft one that acts as a halo so the glyph never sits
+     directly on a spotlight. */
+  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 14px rgba(0, 0, 0, 0.6);
+
+  /* Baloo 2 is the Devanagari member of the family — "Baloo Bhai 2" is the
+     Gujarati one and carries no U+0900–097F, so it silently falls back to a
+     system font. The fallbacks below are the Devanagari faces that ship with
+     macOS, Windows and Android, for the moment before the webfont lands. */
+  --body: 'Baloo 2', 'Kohinoor Devanagari', 'Nirmala UI', 'Noto Sans Devanagari', ui-rounded,
+    system-ui, sans-serif;
+  --display: 'Yatra One', var(--body);
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Baloo is a heavy display face — right for the wordmark, too shouty for
+     small chrome. The top bar uses the platform UI face instead: lighter,
+     crisper at 13px, and free. */
+  --ui: ui-sans-serif, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+
+  /* Motion. One vocabulary, used everywhere — mismatched curves are what
+     make an interface feel assembled rather than designed.
+     `swift` for pointer feedback, `glide` for anything that travels,
+     `settle` for entrances that should decelerate into place. */
+  --swift: 140ms cubic-bezier(0.4, 0, 0.2, 1);
+  --glide: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  --settle: 620ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Written by app.js from the current track's bpm, so the strobe and the
+     dot breathe in time with whatever is playing. */
+  --beat: 0.6s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Available to crawlers and screen readers, invisible on screen. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+html,
+body {
+  height: 100%;
+  /* This page never scrolls — everything is pinned to the viewport. Both
+     elements need it: overflow on body alone still lets html scroll. */
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  color: var(--sand);
+  background: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--strobe-c);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── Backdrop ───────────────────────────────────────────────
+   Three photographs of a booth, cross-faded on every track change, with
+   four layers stacked over them. Those layers are what let a photograph
+   carry an interface: bass and strobe give it a pulse, the vignette and
+   scrim buy contrast for text, and the grain stops big smooth areas
+   banding on cheap panels. Order matters — grain goes last so it sits
+   over everything, scrim under it so the noise is not darkened. */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--ink);
+}
+
+/* Underneath both photographs: what you see for the few hundred
+   milliseconds before the first one paints, and if they never arrive. */
+.bg__floor {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 70% at 50% 108%, rgba(255, 46, 147, 0.35) 0%, transparent 60%),
+    linear-gradient(180deg, #06040c 0%, #0d0818 46%, #1b0f26 100%);
+}
+
+/* The rooms. All are in the DOM from the start; only opacity moves, so a
+   swap costs nothing but a composite and can never show a half-downloaded
+   frame. */
+.bg__scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bg__scene.is-on {
+  opacity: 1;
+}
+
+/* A portrait phone crops most of a 3:2 frame away, so each room says which
+   part of itself to keep. The DJ is centre-right in the first two and hard
+   left in the third; one shared value would behead him in one of them. */
+.bg__scene img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50%) 50%;
+}
+
+.bg__scene[data-scene='0'] {
+  --focus: 58%;
+}
+
+.bg__scene[data-scene='1'] {
+  --focus: 58%;
+}
+
+.bg__scene[data-scene='2'] {
+  --focus: 33%;
+}
+
+/* The beat.
+
+   Two layers doing different jobs, because one cannot do both. The flash
+   is a hard white hit on the downbeat — short, so it reads as a strobe
+   rather than a flicker. The bass is a slower magenta swell from the
+   floor that never fully clears, which is what gives the room the low
+   thump you feel rather than see.
+
+   The flash decays with `steps(1, end)`: a fade-out reads as a lamp
+   dimming, an instant cut reads as a strobe. The bass eases, because
+   that is the opposite of a hit.
+
+   Both are switched off entirely under prefers-reduced-motion, below —
+   a strobing club is exactly what that setting exists for. */
+.bg__strobe {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(120% 70% at 50% 100%, rgba(255, 255, 255, 0.95), transparent 66%);
+}
+
+.bg__bass {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(140% 80% at 50% 108%, rgba(255, 46, 147, 0.85), transparent 62%);
+}
+
+body.is-playing .bg__strobe {
+  animation: pulse var(--beat) steps(1, end) infinite;
+}
+
+body.is-playing .bg__bass {
+  /* Half speed: the kick lands on every other beat in most of this
+     playlist, and a swell on every beat is just a flicker again. */
+  animation: thump calc(var(--beat) * 2) cubic-bezier(0.2, 0, 0.3, 1) infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.16;
+  }
+  14% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes thump {
+  0% {
+    opacity: 0.34;
+    transform: scale(1.06);
+  }
+  55% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+}
+
+.bg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 42%, transparent 34%, rgba(0, 0, 0, 0.78) 100%);
+}
+
+/* Text on a photograph is a contrast problem, not a colour problem: no
+   shade of warm white survives a white spotlight behind it. So the two
+   bands that carry text — the top bar and the dock — get their own
+   darkening, strongest exactly where the type sits and gone by the
+   middle of the frame, which is left clear for the room. */
+.bg__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 4, 12, 0.78) 0%, rgba(6, 4, 12, 0.34) 9%, transparent 20%),
+    linear-gradient(0deg, rgba(6, 4, 12, 0.86) 0%, rgba(6, 4, 12, 0.5) 16%, transparent 38%);
+}
+
+/* Film grain. An inline SVG turbulence rather than a tiled PNG: no extra
+   request, and it stays sharp at any density. It is the single thing that
+   stops big smooth gradients banding on cheap panels. */
+.bg__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* The actual sound source: 1×1, off-screen, never seen. YouTube has no
+   audio-only embed, so this plus a `tiny` quality hint is as close as it
+   gets to not paying for pixels nobody looks at. */
+.yt-host {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Entrance ───────────────────────────────────────────────
+   Everything rises into place once, slightly staggered, instead of
+   snapping in as the CSS parses. */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-16px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.topbar,
+.logo,
+.dock {
+  animation: rise var(--settle) both;
+}
+
+.topbar {
+  animation-delay: 0.28s;
+}
+
+.logo {
+  animation-delay: 0.12s;
+}
+
+.dock {
+  animation-delay: 0.4s;
+}
+
+.horns {
+  animation: rise-left var(--settle) 0.62s both;
+}
+
+/* ── Top bar ────────────────────────────────────────────────
+   One grid row so the clock, the counter and the links share a centre
+   line. Three separately-positioned boxes cannot stay aligned once
+   their heights differ. */
+
+.topbar {
+  position: fixed;
+  z-index: 20;
+  inset: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: calc(var(--edge) + env(safe-area-inset-top)) var(--edge) 0;
+  font-family: var(--ui);
+  font-size: 0.8125rem;
+  text-shadow: var(--text-shadow);
+}
+
+.clock {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--sand-dim);
+  /* Reserve the width the longest time can take, so the bar does not
+     twitch sideways at 9:59 → 10:00. */
+  min-width: 5rem;
+}
+
+.presence {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-self: center;
+  color: var(--sand-dim);
+  white-space: nowrap;
+}
+
+.presence__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon);
+}
+
+body.is-playing .presence__dot {
+  animation: throb var(--beat) ease-out infinite;
+}
+
+@keyframes throb {
+  0% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  60%,
+  100% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+}
+
+.presence__count {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--sand);
+}
+
+.links {
+  display: inline-flex;
+  gap: 0.35rem;
+  justify-self: end;
+}
+
+.link {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--sand-dim);
+  transition: color var(--swift), background var(--swift), transform var(--swift);
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--sand);
+  background: var(--glass);
+  transform: translateY(-1px);
+}
+
+/* ── Air horn ───────────────────────────────────────────────
+   Anchored to the left edge, vertically near the dock so a thumb
+   reaches it without crossing the screen. */
+
+.horns {
+  position: fixed;
+  z-index: 15;
+  left: var(--edge);
+  bottom: calc(42vh + env(safe-area-inset-bottom));
+}
+
+.horn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.6rem;
+  font: inherit;
+  color: var(--sand);
+  cursor: pointer;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: var(--shadow-glass);
+  text-shadow: var(--text-shadow);
+  transition: transform var(--swift), background var(--swift), box-shadow var(--swift);
+}
+
+.horn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.horn:active,
+.horn.is-blaring {
+  transform: scale(0.94);
+  background: rgba(255, 46, 147, 0.28);
+  box-shadow: 0 0 32px rgba(255, 46, 147, 0.55), var(--shadow-glass);
+}
+
+.horn__icon {
+  display: grid;
+  place-items: center;
+  color: var(--brass);
+}
+
+.horn__text {
+  display: grid;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.horn__deva {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.horn__en {
+  font-family: var(--ui);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sand-dim);
+}
+
+/* ── Wordmark ───────────────────────────────────────────────
+   Painted onto the scene, not boxed. Positioned by the three variables
+   at the top of this file so it can be nudged to fit the artwork
+   without touching layout code. */
+
+/* Centring lives here, on an element with no animation on it, so nothing
+   can overwrite it. `place-items: center` needs no transform at all —
+   which is the whole point, since the wordmark's entrance owns transform. */
+.logo-slot {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  /* The dock owns the lower third, so the optical centre of the free space
+     sits above the geometric one. Padding lifts the wordmark without
+     taking it out of the centring. */
+  padding-bottom: var(--logo-lift);
+  padding-left: var(--logo-x);
+  pointer-events: none;
+}
+
+.logo {
+  margin: 0;
+  display: grid;
+  gap: 0.02em;
+  font-family: var(--display);
+  font-size: var(--logo-size);
+  font-weight: 400;
+  line-height: 0.92;
+  text-align: center;
+  letter-spacing: 0.01em;
+  /* Two shadows: a tight dark one for legibility against a bright patch
+     of artwork, and a wide magenta one so the type looks lit by the room
+     rather than pasted over it. */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 44px rgba(255, 46, 147, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+
+.logo__line {
+  display: block;
+}
+
+/* ── Dock ───────────────────────────────────────────────────
+   Everything the hand touches lives in the bottom third. */
+
+.dock {
+  position: fixed;
+  z-index: 20;
+  inset: auto 0 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  padding: 0 var(--edge) calc(var(--edge) + env(safe-area-inset-bottom));
+}
+
+/* ── Bumper line ────────────────────────────────────────────── */
+
+.bumper {
+  max-width: 34rem;
+  margin: 0;
+  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--sand);
+  text-shadow: var(--text-shadow);
+}
+
+.bumper__next {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 0.4rem;
+  padding: 0;
+  vertical-align: -0.2em;
+  color: var(--sand-dim);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--glass-line);
+  border-radius: 50%;
+  transition: color var(--swift), background var(--swift), transform var(--glide);
+}
+
+.bumper__next:hover {
+  color: var(--sand);
+  background: var(--glass);
+}
+
+.bumper__next:active {
+  transform: rotate(-180deg);
+}
+
+/* ── Playlist ───────────────────────────────────────────────
+   Pops up over the art rather than pushing the dock around. */
+
+.list {
+  width: min(34rem, 100%);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  /* A dark panel, not the 10%-white glass the bar uses. The bar floats a
+     single line over the artwork; this thing has to carry sixty rows of
+     small text, and backdrop-filter alone does not make that readable —
+     it is also the first thing to be dropped on older Android, which
+     would leave the wordmark showing straight through the playlist. */
+  background: rgba(10, 7, 18, 0.95);
+  border: 1px solid transparent;
+  border-radius: 18px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  transition: max-height var(--glide), opacity var(--glide), border-color var(--glide);
+}
+
+.list.is-open {
+  max-height: min(46vh, 24rem);
+  overflow: auto;
+  opacity: 1;
+  border-color: var(--glass-line);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Rotation pills. Sticky so the current filter stays visible while the
+   list scrolls under it. */
+.list__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.6rem;
+  background: rgba(10, 7, 18, 0.94);
+}
+
+.list__rotations {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.list__rotations::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--sand-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  transition: color var(--swift), background var(--swift), border-color var(--swift);
+}
+
+.pill:hover {
+  color: var(--sand);
+}
+
+.pill[aria-selected='true'] {
+  color: #10060d;
+  background: var(--neon);
+  border-color: transparent;
+}
+
+/* Shuffle. Same pill shell as the rotations so the panel header reads as
+   one row of controls rather than two kinds of button. */
+.pill--icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  padding: 0;
+}
+
+.pill--icon.is-on {
+  color: var(--neon);
+  border-color: rgba(255, 46, 147, 0.55);
+}
+
+.list ol {
+  margin: 0;
+  padding: 0 0.4rem 0.4rem;
+  list-style: none;
+}
+
+.list li {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.5rem 0.6rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background var(--swift);
+}
+
+.list li:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.list li[aria-current='true'] {
+  background: rgba(255, 46, 147, 0.18);
+}
+
+.list li[aria-current='true'] .li__title {
+  color: var(--sand);
+}
+
+.li__n {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--sand-dim);
+  text-align: right;
+}
+
+.li__body {
+  min-width: 0;
+}
+
+.li__title,
+.li__artist {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.li__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.li__artist {
+  font-family: var(--ui);
+  font-size: 0.75rem;
+  color: var(--sand-dim);
+}
+
+/* ── Player ─────────────────────────────────────────────────── */
+
+/* One row: sleeve, then everything about the song, then the transport.
+   Deluxe Saloon's bar is the reference — a capsule, not a card. The whole
+   point is that it stays one row tall at every width, which is why the
+   timecode sits beside the rail and shuffle lives in the playlist panel. */
+.player {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  width: min(34rem, 100%);
+  padding: 0.5rem 0.7rem 0.5rem 0.5rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow-glass);
+}
+
+/* ── The record ─────────────────────────────────────────────
+   A vinyl, not a cassette — that one is Truck Wala's. The spin rate is
+   fixed at a 33⅓ feel and deliberately NOT tied to bpm: a record does
+   not turn faster because the song is quicker. */
+
+.disc {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+}
+
+.disc__ring {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #0b0710;
+  /* Grooves: a repeating conic sheen plus a hard inner edge. */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 6px 20px rgba(0, 0, 0, 0.5);
+  animation: spin 3.2s linear infinite;
+  animation-play-state: paused;
+}
+
+body.is-playing .disc__ring {
+  animation-play-state: running;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.disc__art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--glide);
+}
+
+.disc__art[src]:not([src='']) {
+  opacity: 1;
+}
+
+/* The spindle hole. Sits outside the spinning ring so it does not
+   wobble if the artwork is off-centre. */
+.disc__hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--shade);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Now playing ────────────────────────────────────────────── */
+
+.meta {
+  min-width: 0; /* lets the title actually ellipsis inside the grid track */
+}
+
+.meta__title,
+.meta__artist {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity var(--swift);
+}
+
+.meta__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.meta__artist {
+  font-family: var(--ui);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--sand-dim);
+}
+
+/* Rail and timecode on one line. */
+.seekrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+/* Cross-fade on track change — a hard swap reads as a glitch. */
+.player.is-swapping .meta__title,
+.player.is-swapping .meta__artist {
+  opacity: 0;
+}
+
+/* ── Seek ───────────────────────────────────────────────────
+   A generous invisible hit area around a thin visible rail: the rail is
+   3px because that looks right, and 3px is unhittable with a thumb. */
+
+.seek {
+  position: relative;
+  height: 18px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.seek__rail {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.seek__fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon), var(--strobe-c));
+  border-radius: 999px;
+}
+
+.seek__knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  transform: translate(-50%, -50%) scale(0.8);
+  border-radius: 50%;
+  background: var(--sand);
+  box-shadow: 0 0 10px rgba(255, 46, 147, 0.9);
+  opacity: 0;
+  transition: opacity var(--swift), transform var(--swift);
+}
+
+.seek:hover .seek__knob,
+.seek:focus-visible .seek__knob,
+.seek.is-scrubbing .seek__knob {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.time {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--sand-dim);
+}
+
+/* ── Controls ───────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.btn {
+  display: grid;
+  place-items: center;
+  /* 40px is about the smallest target a thumb reliably hits; the icon
+     inside is much smaller, which is fine — the hit area is what counts. */
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--sand);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  transition: background var(--swift), color var(--swift), transform var(--swift),
+    opacity var(--swift);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--glass);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Outlined, not filled — a ring reads as "the control" without becoming
+   the brightest object on a dark photograph, which a solid disc does. */
+.btn--play {
+  width: 46px;
+  height: 46px;
+  margin: 0 0.15rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+}
+
+.btn--play:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--sand);
+}
+
+/* The play triangle is visually left-heavy inside a circle; a hair of
+   padding puts its optical centre on the real one. */
+.btn--play .i-play {
+  margin-left: 2px;
+}
+
+/* One button, two icons — swapping `hidden` on SVGs loses the button's
+   focus ring on some browsers, so we toggle display in CSS instead. */
+.btn--play .i-pause,
+body.is-playing .btn--play .i-play {
+  display: none;
+}
+
+body.is-playing .btn--play .i-pause {
+  display: block;
+}
+
+.btn--toggle {
+  color: var(--sand-dim);
+}
+
+.btn--toggle.is-on,
+.btn--toggle[aria-expanded='true'] {
+  color: var(--neon);
+}
+
+/* Both of these float at the same height as the open playlist. They fade
+   out rather than fight it for the space. */
+body.list-open .horns,
+body.list-open .install {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--glide);
+}
+
+/* ── Install & rights ───────────────────────────────────────── */
+
+.install {
+  position: fixed;
+  z-index: 20;
+  right: var(--edge);
+  bottom: calc(42vh + env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  font-family: var(--ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--sand);
+  cursor: pointer;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: background var(--swift), transform var(--swift);
+}
+
+.install:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.rights {
+  max-width: 30rem;
+  font-family: var(--ui);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  color: rgba(255, 247, 238, 0.46);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.rights a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rights a:hover {
+  color: var(--sand-dim);
+}
+
+/* ── Narrow screens ─────────────────────────────────────────── */
+
+@media (max-width: 30rem) {
+  .horn__text {
+    display: none; /* icon only — the rail must not crowd the wordmark */
+  }
+
+  .horn {
+    padding: 0.55rem;
+  }
+
+  .horns {
+    bottom: calc(38vh + env(safe-area-inset-bottom));
+  }
+
+  .install {
+    bottom: calc(38vh + env(safe-area-inset-bottom));
+  }
+
+  .presence__label {
+    display: none; /* the dot and the number carry it */
+  }
+
+  .rights {
+    /* Two lines of 10px legal text under a 44px control row is more
+       clutter than a phone can spare. */
+    display: none;
+  }
+}
+
+/* Short landscape — a phone turned sideways has no vertical room at all,
+   so the wordmark gets out of the way. */
+@media (max-height: 32rem) and (orientation: landscape) {
+  /* --logo-lift is read by .logo-slot, so it has to be set on the slot;
+     setting it on .logo would inherit downwards to nothing. */
+  .logo-slot {
+    --logo-lift: 4vh;
+  }
+
+  .logo {
+    --logo-size: 2.4rem;
+  }
+
+  .bumper {
+    display: none;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────
+   Everything decorative stops. The site must be fully usable, and
+   genuinely calm, with this on — a strobing club is exactly the kind of
+   page this setting exists for. */
+
+@media (prefers-reduced-motion: reduce) {
+  .bg__strobe,
+  .bg__bass {
+    display: none;
+  }
+
+  .disc__ring,
+  .presence__dot,
+  .topbar,
+  .logo,
+  .dock,
+  .horns {
+    animation: none !important;
+  }
+
+  * {
+    transition-duration: 1ms !important;
+  }
+}

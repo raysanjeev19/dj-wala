@@ -1,0 +1,33 @@
+{
+  "name": "DJ Wala — डीजे वाला",
+  "short_name": "DJ Wala",
+  "description": "Bina cover charge ke club. Non-stop Punjabi, Bollywood, baraat and retro floor fillers.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08060f",
+  "theme_color": "#08060f",
+  "lang": "en-IN",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

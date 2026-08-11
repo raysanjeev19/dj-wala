@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DJ Wala | डीजे वाला</title>
+    <meta
+      name="description"
+      content="Bina cover charge ke club. Non-stop Punjabi, Bollywood, baraat and retro floor fillers — the songs the DJ never skips. Press play."
+    />
+    <meta name="theme-color" content="#08060f" />
+
+    <!-- Absolute URLs — link previews drop relative ones. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DJ Wala" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:title" content="DJ Wala" />
+    <meta property="og:description" content="Bina cover charge ke club. Press play." />
+    <meta property="og:url" content="https://djwala.xyz" />
+    <!-- Bump ?v= whenever the image changes: WhatsApp, iMessage and X cache
+         link previews for weeks and key that cache on the URL. -->
+    <meta property="og:image" content="https://djwala.xyz/assets/opengraph.jpg?v=1" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="DJ Wala — bina cover charge ke club." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DJ Wala" />
+    <meta name="twitter:description" content="Bina cover charge ke club. Press play." />
+    <meta name="twitter:image" content="https://djwala.xyz/assets/opengraph.jpg?v=1" />
+    <meta name="twitter:image:alt" content="DJ Wala — bina cover charge ke club." />
+
+    <link rel="canonical" href="https://djwala.xyz" />
+
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="DJ Wala" />
+
+    <!-- The backdrop is the LCP. Preload the rendition the phone will
+         actually pick, so it is not queued behind the stylesheet. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/club-1-sm.jpg"
+      media="(max-width: 767px)"
+    />
+    <link rel="preload" as="image" href="/assets/club-1.jpg" media="(min-width: 768px)" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Yatra+One&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://djwala.xyz/#website",
+            "url": "https://djwala.xyz/",
+            "name": "DJ Wala",
+            "alternateName": "डीजे वाला",
+            "description": "Club, pub and baraat floor fillers — Punjabi, Bollywood, retro and after-hours.",
+            "inLanguage": ["en", "hi"]
+          },
+          {
+            "@type": "MusicPlaylist",
+            "name": "DJ Wala",
+            "url": "https://djwala.xyz/",
+            "description": "The songs that fill an Indian dance floor — Punjabi pop, Bollywood remixes, baraat dhol, retro club and after-hours.",
+            "isPartOf": { "@id": "https://djwala.xyz/#website" }
+          }
+        ]
+      }
+    </script>
+
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+
+  <body>
+    <!-- ── Backdrop ──────────────────────────────────────────────
+         Three rooms, cross-faded on every track change (app.js § Scenes).
+         All three are in the DOM from the start rather than swapping one
+         src: a swap shows a blank frame while the next file downloads, and
+         that only has to happen once to look broken. The first is eager
+         and preloaded because it is the LCP; the other two are lazy.
+
+         The layers above them do the same job they did over the CSS
+         placeholder — a photograph still needs the vignette to hold text
+         and the grain to stop banding. -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__floor"></div>
+
+      <div class="bg__scene is-on" data-scene="0">
+        <picture>
+          <source media="(min-width: 768px)" srcset="/assets/club-1.jpg" />
+          <img src="/assets/club-1-sm.jpg" alt="" width="1536" height="1024" />
+        </picture>
+      </div>
+      <div class="bg__scene" data-scene="1">
+        <picture>
+          <source media="(min-width: 768px)" srcset="/assets/club-2.jpg" />
+          <img src="/assets/club-2-sm.jpg" alt="" width="1536" height="1024" loading="lazy" />
+        </picture>
+      </div>
+      <div class="bg__scene" data-scene="2">
+        <picture>
+          <source media="(min-width: 768px)" srcset="/assets/club-3.jpg" />
+          <img src="/assets/club-3-sm.jpg" alt="" width="1456" height="1088" loading="lazy" />
+        </picture>
+      </div>
+
+      <div class="bg__bass"></div>
+      <div class="bg__strobe" id="strobe"></div>
+      <div class="bg__vignette"></div>
+      <div class="bg__scrim"></div>
+      <div class="bg__grain"></div>
+    </div>
+
+    <!-- The sound source. A 1×1 iframe parked off-screen; everything you
+         can see below is our own chrome. -->
+    <div class="yt-host" aria-hidden="true"><div id="yt-player"></div></div>
+
+    <!-- ── Top bar ───────────────────────────────────────────────
+         One grid row so the clock, the counter and the links share a
+         centre line — three separately-positioned boxes drift apart the
+         moment their heights differ. -->
+    <header class="topbar">
+      <div class="clock" id="clock" aria-label="Current time"></div>
+
+      <div class="presence" aria-live="polite">
+        <span class="presence__dot" aria-hidden="true"></span>
+        <span class="presence__count" id="listeners">—</span>
+        <span class="presence__label">on the floor</span>
+      </div>
+
+      <nav class="links" aria-label="Listen elsewhere">
+        <a
+          class="link"
+          id="link-ytm"
+          href="https://music.youtube.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open the playlist on YouTube Music"
+          title="Open the playlist on YouTube Music"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228s6.228-2.796 6.228-6.228S15.432 5.772 12 5.772zM9.684 15.54V8.46L15.816 12l-6.132 3.54z"
+            />
+          </svg>
+        </a>
+        <a
+          class="link"
+          id="link-spotify"
+          href="https://open.spotify.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open the playlist on Spotify"
+          title="Open the playlist on Spotify"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.66.48-1.02.24-2.82-1.74-6.36-2.1-10.56-1.14-.42.12-.78-.18-.9-.54-.12-.42.18-.78.54-.9 4.56-1.02 8.52-.6 11.64 1.32.42.18.48.66.3 1.02zm1.44-3.3c-.3.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.38-.48.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.38-1.32 9.78-.66 13.5 1.62.36.18.54.78.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.3c-.6.18-1.2-.18-1.38-.72-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.72 1.62.54.3.72 1.02.42 1.56-.3.42-1.02.6-1.56.3z"
+            />
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <!-- ── Air horn ───────────────────────────────────────────────
+         Truck Wala has the horn. This is the club's version: the
+         pull-up siren. Three taps in a row rewinds the track. -->
+    <aside class="horns">
+      <button class="horn" id="horn" type="button" aria-label="Sound the air horn">
+        <span class="horn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3z" />
+            <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M15.4 8.4a5.2 5.2 0 010 7.2" />
+              <path d="M18.2 5.6a9.2 9.2 0 010 12.8" />
+            </g>
+          </svg>
+        </span>
+        <span class="horn__text">
+          <span class="horn__deva" lang="hi">बजा दे!</span>
+          <span class="horn__en">Pull up</span>
+        </span>
+      </button>
+    </aside>
+
+    <main>
+      <!-- ── Wordmark, painted onto the scene ────────────────────
+           The slot does the centring, the h1 does the entrance. They have
+           to be two elements: the `rise` keyframes end on
+           `transform: none`, and an animation beats a normal declaration,
+           so a centring translate on the animated element is wiped the
+           moment the animation lands — which is why this sat half its own
+           width right of centre. -->
+      <div class="logo-slot">
+        <h1 class="logo" lang="hi">
+          <span class="logo__line">डीजे</span>
+          <span class="logo__line">वाला</span>
+          <!-- The wordmark is Devanagari only; this gives crawlers and screen
+               readers the Latin name without changing the design. -->
+          <span class="sr-only" lang="en">DJ Wala — club, pub and baraat floor fillers</span>
+        </h1>
+      </div>
+
+      <!-- ── Dock ─────────────────────────────────────────────── -->
+      <div class="dock">
+        <!-- Playlist pops up over the art -->
+        <section class="list" id="list" aria-label="Playlist">
+          <!-- Shuffle lives here rather than in the bar. Deluxe Saloon's bar
+               carries three controls and stays one row tall; a fifth button
+               is what breaks that on a narrow phone. -->
+          <div class="list__head">
+            <div class="list__rotations" id="rotations" role="tablist" aria-label="Rotations"></div>
+            <button
+              id="shuffle"
+              type="button"
+              class="pill pill--icon is-on"
+              aria-label="Shuffle"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M17 3l4 4-4 4V8h-2.2l-2.3 3.1 2.3 3.1H17V11l4 4-4 4v-3h-3.2l-2.6-3.5L8.6 15H3v-2h4.6l2.6-3.5L12.8 6H17V3zM3 9h3.4l1.5 2H3V9z"
+                />
+              </svg>
+            </button>
+          </div>
+          <ol id="listItems"></ol>
+        </section>
+
+        <!-- The button lives inside the paragraph so it flows after the last
+             word — as a sibling it would sit at the edge of the text box,
+             which a short line leaves stranded far from the visible text. -->
+        <p class="bumper">
+          <span class="bumper__text" id="bumperText" lang="hi" aria-live="polite"
+            >बजने दे भाई, अभी तो रात बाकी है</span
+          ><button class="bumper__next" id="bumperNext" type="button" aria-label="Another line">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 11.5A8 8 0 106.3 17.7" />
+              <path d="M20 5.5v6h-6" />
+            </svg>
+          </button>
+        </p>
+
+        <section class="player" id="player" aria-label="Player">
+          <div class="disc" id="disc">
+            <div class="disc__ring">
+              <img id="cover" class="disc__art" alt="" src="" />
+            </div>
+            <span class="disc__hub" aria-hidden="true"></span>
+          </div>
+
+          <div class="meta">
+            <p class="meta__title" id="title">Warming up the decks…</p>
+            <p class="meta__artist" id="artist">&nbsp;</p>
+
+            <!-- Seek and timecode share one row, the way Deluxe Saloon's bar
+                 does. Stacking the time under the rail is what forces a
+                 player to be two rows tall. -->
+            <div class="seekrow">
+              <div
+                class="seek"
+                id="seek"
+                role="slider"
+                tabindex="0"
+                aria-label="Seek"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div class="seek__rail"><div class="seek__fill" id="seekFill"></div></div>
+                <div class="seek__knob" id="seekKnob"></div>
+              </div>
+              <div class="time"><span id="tCur">0:00</span> / <span id="tDur">0:00</span></div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="prev" type="button" class="btn" aria-label="Previous track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
+            </button>
+            <button id="play" type="button" class="btn btn--play" aria-label="Play" disabled>
+              <svg
+                class="i-play"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg
+                class="i-pause"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              </svg>
+            </button>
+            <button id="next" type="button" class="btn" aria-label="Next track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M16 6h2v12h-2zm-2 6L5.5 6v12z" />
+              </svg>
+            </button>
+            <button
+              id="listBtn"
+              type="button"
+              class="btn btn--toggle"
+              aria-label="Playlist"
+              aria-expanded="false"
+              aria-controls="list"
+            >
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+                <path d="M3 6h13v2H3zm0 5h13v2H3zm0 5h9v2H3zm15-6.5l4 3-4 3z" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Inside the dock, not floating at the bottom of the viewport: as
+             a separate fixed element it sat underneath the player on short
+             screens. In flow it simply cannot collide. -->
+        <footer class="rights">
+          Everything streams from YouTube — we host nothing, and all rights stay with the owners.
+          Want something taken down? <a href="mailto:support@ignitedbusiness.com">Write to us.</a>
+        </footer>
+      </div>
+    </main>
+
+    <!-- Only appears once the browser offers the prompt; hidden otherwise. -->
+    <button class="install" id="install" type="button" hidden>
+      <svg
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16" />
+      </svg>
+      Install
+    </button>
+
+    <noscript>
+      <p style="color: #fff; text-align: center; padding: 2rem">
+        This one needs JavaScript — the player is a YouTube iframe under the hood.
+      </p>
+    </noscript>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+.DS_Store
+
+# Vercel's local project link — machine-specific, not shared.
+.vercel
+
+# Search results cached from YouTube so an interrupted run resumes.
+# Regenerate with scripts/find-candidates.mjs.
+scripts/.search-cache.json
+
+# Throwaway Chrome profile used by the embeddability check.
+scripts/.chrome-embed-check/
